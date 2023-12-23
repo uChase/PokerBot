@@ -1,0 +1,177 @@
+Game started at: 2016/11/29 15:25:37
+Game ID: 787027613 0.50/1 (PRR) Karkadann (Hold'em)
+Seat 7 is the button
+Seat 1: StephCurry (105.78).
+Seat 2: PANDAisEVIL (101).
+Seat 3: AironVega (103.20).
+Seat 4: IlxxxlI (43).
+Seat 5: pineapplesand (40).
+Seat 6: dankmann (206.52).
+Seat 7: ElvenEyes (115).
+Seat 8: gust (46).
+Seat 9: VegetablesArentYummy (273.59).
+Player gust has small blind (0.50)
+Player VegetablesArentYummy has big blind (1)
+Player gust received a card.
+Player gust received a card.
+Player VegetablesArentYummy received a card.
+Player VegetablesArentYummy received a card.
+Player StephCurry received a card.
+Player StephCurry received a card.
+Player PANDAisEVIL received a card.
+Player PANDAisEVIL received a card.
+Player AironVega received a card.
+Player AironVega received a card.
+Player IlxxxlI received card: [9d]
+Player IlxxxlI received card: [7d]
+Player pineapplesand received a card.
+Player pineapplesand received a card.
+Player dankmann received a card.
+Player dankmann received a card.
+Player ElvenEyes received a card.
+Player ElvenEyes received a card.
+Player StephCurry folds
+Player PANDAisEVIL folds
+Player AironVega folds
+Player IlxxxlI folds
+Player pineapplesand folds
+Player dankmann raises (3)
+Player ElvenEyes folds
+Player gust folds
+Player VegetablesArentYummy folds
+Uncalled bet (2) returned to dankmann
+Player dankmann mucks cards
+------ Summary ------
+Pot: 2.50. Rake 0
+Player StephCurry does not show cards.Bets: 0. Collects: 0. Wins: 0.
+Player PANDAisEVIL does not show cards.Bets: 0. Collects: 0. Wins: 0.
+Player AironVega does not show cards.Bets: 0. Collects: 0. Wins: 0.
+Player IlxxxlI does not show cards.Bets: 0. Collects: 0. Wins: 0.
+Player pineapplesand does not show cards.Bets: 0. Collects: 0. Wins: 0.
+*Player dankmann mucks (does not show cards). Bets: 1. Collects: 2.50. Wins: 1.50.
+Player ElvenEyes does not show cards.Bets: 0. Collects: 0. Wins: 0.
+Player gust does not show cards.Bets: 0.50. Collects: 0. Loses: 0.50.
+Player VegetablesArentYummy does not show cards.Bets: 1. Collects: 0. Loses: 1.
+Game ended at: 2016/11/29 15:26:36
+
+Game started at: 2016/11/29 15:26:38
+Game ID: 787027929 0.50/1 (PRR) Karkadann (Hold'em)
+Seat 8 is the button
+Seat 1: StephCurry (105.78).
+Seat 2: PANDAisEVIL (101).
+Seat 3: AironVega (103.20).
+Seat 4: IlxxxlI (43).
+Seat 5: pineapplesand (40).
+Seat 6: dankmann (208.02).
+Seat 7: ElvenEyes (115).
+Seat 8: gust (45.50).
+Seat 9: VegetablesArentYummy (272.59).
+Player VegetablesArentYummy has small blind (0.50)
+Player StephCurry has big blind (1)
+Player VegetablesArentYummy received a card.
+Player VegetablesArentYummy received a card.
+Player StephCurry received a card.
+Player StephCurry received a card.
+Player PANDAisEVIL received a card.
+Player PANDAisEVIL received a card.
+Player AironVega received a card.
+Player AironVega received a card.
+Player IlxxxlI received card: [Js]
+Player IlxxxlI received card: [3h]
+Player pineapplesand received a card.
+Player pineapplesand received a card.
+Player dankmann received a card.
+Player dankmann received a card.
+Player ElvenEyes received a card.
+Player ElvenEyes received a card.
+Player gust received a card.
+Player gust received a card.
+Player PANDAisEVIL folds
+Player AironVega folds
+Player IlxxxlI folds
+Player pineapplesand folds
+Player dankmann folds
+Player ElvenEyes folds
+Player gust folds
+Player VegetablesArentYummy raises (2.50)
+Player StephCurry calls (2)
+*** FLOP ***: [6d 5d 6s]
+Player VegetablesArentYummy bets (2.35)
+Player StephCurry calls (2.35)
+*** TURN ***: [6d 5d 6s] [7s]
+Player VegetablesArentYummy bets (7.78)
+Player StephCurry calls (7.78)
+*** RIVER ***: [6d 5d 6s 7s] [7c]
+Player VegetablesArentYummy checks
+Player StephCurry checks
+------ Summary ------
+Pot: 24.95. Rake 1.07. JP fee 0.24
+Board: [6d 5d 6s 7s 7c]
+*Player StephCurry shows: Two pairs. 7s and 6s [Ad 10d]. Bets: 13.13. Collects: 12.47. Loses: 0.66.
+Player PANDAisEVIL does not show cards.Bets: 0. Collects: 0. Wins: 0.
+Player AironVega does not show cards.Bets: 0. Collects: 0. Wins: 0.
+Player IlxxxlI does not show cards.Bets: 0. Collects: 0. Wins: 0.
+Player pineapplesand does not show cards.Bets: 0. Collects: 0. Wins: 0.
+Player dankmann does not show cards.Bets: 0. Collects: 0. Wins: 0.
+Player ElvenEyes does not show cards.Bets: 0. Collects: 0. Wins: 0.
+Player gust does not show cards.Bets: 0. Collects: 0. Wins: 0.
+*Player VegetablesArentYummy shows: Two pairs. 7s and 6s [9s Ah]. Bets: 13.13. Collects: 12.48. Loses: 0.65.
+Game ended at: 2016/11/29 15:28:9
+
+Game started at: 2016/12/30 12:54:25
+Game ID: 808941103 0.50/1 (PRR) Karkadann (Short) (Hold'em)
+Seat 9 is the button
+Seat 1: Maria_Pia (40).
+Seat 2: RunnerLucker (58.13).
+Seat 3: Pimpika (100.60).
+Seat 4: twoakers (52.88).
+Seat 5: _robbyJ (55.50).
+Seat 6: IlxxxlI (53.50).
+Seat 7: Ice Bank Mice Elf (76.75).
+Seat 8: gust (49.31).
+Seat 9: AironVega (56.76).
+Player Maria_Pia has small blind (0.50)
+Player RunnerLucker has big blind (1)
+Player Maria_Pia received a card.
+Player Maria_Pia received a card.
+Player RunnerLucker received a card.
+Player RunnerLucker received a card.
+Player Pimpika received a card.
+Player Pimpika received a card.
+Player twoakers received a card.
+Player twoakers received a card.
+Player _robbyJ received a card.
+Player _robbyJ received a card.
+Player IlxxxlI received card: [Jd]
+Player IlxxxlI received card: [Jc]
+Player Ice Bank Mice Elf received a card.
+Player Ice Bank Mice Elf received a card.
+Player gust received a card.
+Player gust received a card.
+Player AironVega received a card.
+Player AironVega received a card.
+Player Pimpika folds
+Player twoakers folds
+Player _robbyJ calls (1)
+Player IlxxxlI raises (4)
+Player Ice Bank Mice Elf folds
+Player gust folds
+Player AironVega folds
+Player Maria_Pia raises (10.50)
+Player RunnerLucker folds
+Player _robbyJ folds
+Player IlxxxlI folds
+Uncalled bet (7) returned to Maria_Pia
+Player Maria_Pia mucks cards
+------ Summary ------
+Pot: 10. Rake 0
+*Player Maria_Pia mucks (does not show cards). Bets: 4. Collects: 10. Wins: 6.
+Player RunnerLucker does not show cards.Bets: 1. Collects: 0. Loses: 1.
+Player Pimpika does not show cards.Bets: 0. Collects: 0. Wins: 0.
+Player twoakers does not show cards.Bets: 0. Collects: 0. Wins: 0.
+Player _robbyJ does not show cards.Bets: 1. Collects: 0. Loses: 1.
+Player IlxxxlI does not show cards.Bets: 4. Collects: 0. Loses: 4.
+Player Ice Bank Mice Elf does not show cards.Bets: 0. Collects: 0. Wins: 0.
+Player gust does not show cards.Bets: 0. Collects: 0. Wins: 0.
+Player AironVega does not show cards.Bets: 0. Collects: 0. Wins: 0.
+Game ended at: 2016/12/30 12:55:45
