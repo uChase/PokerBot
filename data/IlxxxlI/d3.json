@@ -164,7 +164,14 @@
                 }
             },
             {
-                "pot": 1.5
+                "pot": 1.5,
+                "flop": [
+                    "6d",
+                    "5d",
+                    "6s"
+                ],
+                "turn": "7s",
+                "river": "7c"
             },
             1034.09
         ]
@@ -249,7 +256,7 @@
                 }
             },
             {
-                "pot": 6.5
+                "pot": 17.0
             },
             543.4300000000001
         ],
@@ -335,6 +342,534 @@
                 "pot": 17.0
             },
             543.4300000000001
+        ]
+    ],
+    [
+        [
+            {
+                "8": {
+                    "name": "Maria_Pia",
+                    "stack": 20.0,
+                    "action": "none",
+                    "pos": "Button",
+                    "cards": [],
+                    "amountIn": 0
+                },
+                "1": {
+                    "name": "choiCES",
+                    "stack": 87.15,
+                    "action": "small blind",
+                    "pos": "Small Blind",
+                    "cards": [],
+                    "amountIn": 0.25
+                },
+                "2": {
+                    "name": "hoocher",
+                    "stack": 62.61,
+                    "action": "big blind",
+                    "pos": "Big Blind",
+                    "cards": [],
+                    "amountIn": 0.5
+                },
+                "3": {
+                    "name": "Parcker",
+                    "stack": 97.82,
+                    "action": "folds",
+                    "pos": "EP",
+                    "cards": [],
+                    "amountIn": 0
+                },
+                "4": {
+                    "name": "IlxxxlI",
+                    "stack": 29.82,
+                    "action": "raises",
+                    "pos": "MP",
+                    "cards": [
+                        "Ad",
+                        "Kd"
+                    ],
+                    "amountIn": 1.75
+                },
+                "5": {
+                    "name": "VamosRafaFTW",
+                    "stack": 49.21,
+                    "action": "none",
+                    "pos": "MP",
+                    "cards": [],
+                    "amountIn": 0
+                },
+                "6": {
+                    "name": "dankmann",
+                    "stack": 95.08,
+                    "action": "none",
+                    "pos": "MP",
+                    "cards": [],
+                    "amountIn": 0
+                },
+                "7": {
+                    "name": "BlueSmoke",
+                    "stack": 46.89,
+                    "action": "none",
+                    "pos": "LP",
+                    "cards": [],
+                    "amountIn": 0
+                }
+            },
+            {
+                "pot": 9.4,
+                "flop": [
+                    "10d",
+                    "2h",
+                    "5s"
+                ],
+                "turn": "2c",
+                "river": "4d"
+            },
+            491.0799999999999
+        ],
+        [
+            {
+                "8": {
+                    "name": "Maria_Pia",
+                    "stack": 20.0,
+                    "action": "folds",
+                    "pos": "Button",
+                    "cards": [],
+                    "amountIn": 0
+                },
+                "1": {
+                    "name": "choiCES",
+                    "stack": 87.15,
+                    "action": "folds",
+                    "pos": "Small Blind",
+                    "cards": [],
+                    "amountIn": 0.25
+                },
+                "2": {
+                    "name": "hoocher",
+                    "stack": 62.61,
+                    "action": "folds",
+                    "pos": "Big Blind",
+                    "cards": [],
+                    "amountIn": 0.5
+                },
+                "3": {
+                    "name": "Parcker",
+                    "stack": 97.82,
+                    "action": "none",
+                    "pos": "EP",
+                    "cards": [],
+                    "amountIn": 0
+                },
+                "4": {
+                    "name": "IlxxxlI",
+                    "stack": 29.82,
+                    "action": "checks",
+                    "pos": "MP",
+                    "cards": [
+                        "Ad",
+                        "Kd"
+                    ],
+                    "amountIn": 1.75
+                },
+                "5": {
+                    "name": "VamosRafaFTW",
+                    "stack": 47.46,
+                    "action": "calls",
+                    "pos": "MP",
+                    "cards": [],
+                    "amountIn": 1.75
+                },
+                "6": {
+                    "name": "dankmann",
+                    "stack": 93.33,
+                    "action": "calls",
+                    "pos": "MP",
+                    "cards": [],
+                    "amountIn": 1.75
+                },
+                "7": {
+                    "name": "BlueSmoke",
+                    "stack": 46.89,
+                    "action": "none",
+                    "pos": "LP",
+                    "cards": [],
+                    "amountIn": 0
+                }
+            },
+            {
+                "pot": 9.4,
+                "flop": [
+                    "10d",
+                    "2h",
+                    "5s"
+                ],
+                "turn": "2c",
+                "river": "4d"
+            },
+            491.0799999999999
+        ],
+        [
+            {
+                "8": {
+                    "name": "Maria_Pia",
+                    "stack": 20.0,
+                    "action": "none",
+                    "pos": "Button",
+                    "cards": [],
+                    "amountIn": 0
+                },
+                "1": {
+                    "name": "choiCES",
+                    "stack": 87.15,
+                    "action": "none",
+                    "pos": "Small Blind",
+                    "cards": [],
+                    "amountIn": 0.25
+                },
+                "2": {
+                    "name": "hoocher",
+                    "stack": 62.61,
+                    "action": "none",
+                    "pos": "Big Blind",
+                    "cards": [],
+                    "amountIn": 0.5
+                },
+                "3": {
+                    "name": "Parcker",
+                    "stack": 97.82,
+                    "action": "none",
+                    "pos": "EP",
+                    "cards": [],
+                    "amountIn": 0
+                },
+                "4": {
+                    "name": "IlxxxlI",
+                    "stack": 29.82,
+                    "action": "checks",
+                    "pos": "MP",
+                    "cards": [
+                        "Ad",
+                        "Kd"
+                    ],
+                    "amountIn": 1.75
+                },
+                "5": {
+                    "name": "VamosRafaFTW",
+                    "stack": 47.46,
+                    "action": "checks",
+                    "pos": "MP",
+                    "cards": [],
+                    "amountIn": 1.75
+                },
+                "6": {
+                    "name": "dankmann",
+                    "stack": 93.33,
+                    "action": "checks",
+                    "pos": "MP",
+                    "cards": [],
+                    "amountIn": 1.75
+                },
+                "7": {
+                    "name": "BlueSmoke",
+                    "stack": 46.89,
+                    "action": "none",
+                    "pos": "LP",
+                    "cards": [],
+                    "amountIn": 0
+                }
+            },
+            {
+                "pot": 9.4,
+                "flop": [
+                    "10d",
+                    "2h",
+                    "5s"
+                ],
+                "turn": "2c",
+                "river": "4d"
+            },
+            491.0799999999999
+        ],
+        [
+            {
+                "8": {
+                    "name": "Maria_Pia",
+                    "stack": 20.0,
+                    "action": "none",
+                    "pos": "Button",
+                    "cards": [],
+                    "amountIn": 0
+                },
+                "1": {
+                    "name": "choiCES",
+                    "stack": 87.15,
+                    "action": "none",
+                    "pos": "Small Blind",
+                    "cards": [],
+                    "amountIn": 0.25
+                },
+                "2": {
+                    "name": "hoocher",
+                    "stack": 62.61,
+                    "action": "none",
+                    "pos": "Big Blind",
+                    "cards": [],
+                    "amountIn": 0.5
+                },
+                "3": {
+                    "name": "Parcker",
+                    "stack": 97.82,
+                    "action": "none",
+                    "pos": "EP",
+                    "cards": [],
+                    "amountIn": 0
+                },
+                "4": {
+                    "name": "IlxxxlI",
+                    "stack": 29.82,
+                    "action": "checks",
+                    "pos": "MP",
+                    "cards": [
+                        "Ad",
+                        "Kd"
+                    ],
+                    "amountIn": 1.75
+                },
+                "5": {
+                    "name": "VamosRafaFTW",
+                    "stack": 47.46,
+                    "action": "checks",
+                    "pos": "MP",
+                    "cards": [],
+                    "amountIn": 1.75
+                },
+                "6": {
+                    "name": "dankmann",
+                    "stack": 93.33,
+                    "action": "checks",
+                    "pos": "MP",
+                    "cards": [],
+                    "amountIn": 1.75
+                },
+                "7": {
+                    "name": "BlueSmoke",
+                    "stack": 46.89,
+                    "action": "none",
+                    "pos": "LP",
+                    "cards": [],
+                    "amountIn": 0
+                }
+            },
+            {
+                "pot": 9.4,
+                "flop": [
+                    "10d",
+                    "2h",
+                    "5s"
+                ],
+                "turn": "2c",
+                "river": "4d"
+            },
+            491.0799999999999
+        ],
+        [
+            {
+                "8": {
+                    "name": "Maria_Pia",
+                    "stack": 20.0,
+                    "action": "none",
+                    "pos": "Button",
+                    "cards": [],
+                    "amountIn": 0
+                },
+                "1": {
+                    "name": "choiCES",
+                    "stack": 87.15,
+                    "action": "none",
+                    "pos": "Small Blind",
+                    "cards": [],
+                    "amountIn": 0.25
+                },
+                "2": {
+                    "name": "hoocher",
+                    "stack": 62.61,
+                    "action": "none",
+                    "pos": "Big Blind",
+                    "cards": [],
+                    "amountIn": 0.5
+                },
+                "3": {
+                    "name": "Parcker",
+                    "stack": 97.82,
+                    "action": "none",
+                    "pos": "EP",
+                    "cards": [],
+                    "amountIn": 0
+                },
+                "4": {
+                    "name": "IlxxxlI",
+                    "stack": 29.82,
+                    "action": "folds",
+                    "pos": "MP",
+                    "cards": [
+                        "Ad",
+                        "Kd"
+                    ],
+                    "amountIn": 1.75
+                },
+                "5": {
+                    "name": "VamosRafaFTW",
+                    "stack": 47.46,
+                    "action": "none",
+                    "pos": "MP",
+                    "cards": [],
+                    "amountIn": 1.75
+                },
+                "6": {
+                    "name": "dankmann",
+                    "stack": 89.92999999999999,
+                    "action": "calls",
+                    "pos": "MP",
+                    "cards": [],
+                    "amountIn": 5.15
+                },
+                "7": {
+                    "name": "BlueSmoke",
+                    "stack": 46.89,
+                    "action": "none",
+                    "pos": "LP",
+                    "cards": [],
+                    "amountIn": 0
+                }
+            },
+            {
+                "pot": 9.4,
+                "flop": [
+                    "10d",
+                    "2h",
+                    "5s"
+                ],
+                "turn": "2c",
+                "river": "4d"
+            },
+            491.0799999999999
+        ]
+    ],
+    [
+        [
+            {
+                "6": {
+                    "name": "IlxxxlI",
+                    "stack": 26.43,
+                    "action": "raises",
+                    "pos": "Button",
+                    "cards": [
+                        "Ah",
+                        "8d"
+                    ],
+                    "amountIn": 2.3
+                },
+                "1": {
+                    "name": "gust",
+                    "stack": 39.5,
+                    "action": "small blind",
+                    "pos": "Small Blind",
+                    "cards": [],
+                    "amountIn": 0.5
+                },
+                "3": {
+                    "name": "Portly23",
+                    "stack": 43.14,
+                    "action": "big blind",
+                    "pos": "Big Blind",
+                    "cards": [],
+                    "amountIn": 1.0
+                },
+                "4": {
+                    "name": "GamesDean",
+                    "stack": 94.65,
+                    "action": "folds",
+                    "pos": "EP",
+                    "cards": [],
+                    "amountIn": 0
+                },
+                "5": {
+                    "name": "Pimpika",
+                    "stack": 50.66,
+                    "action": "folds",
+                    "pos": "MP",
+                    "cards": [],
+                    "amountIn": 0
+                }
+            },
+            {
+                "pot": 5.1,
+                "flop": [
+                    "4h",
+                    "2h",
+                    "2s"
+                ],
+                "turn": "5c"
+            },
+            258.18
+        ],
+        [
+            {
+                "6": {
+                    "name": "IlxxxlI",
+                    "stack": 26.43,
+                    "action": "checks",
+                    "pos": "Button",
+                    "cards": [
+                        "Ah",
+                        "8d"
+                    ],
+                    "amountIn": 2.3
+                },
+                "1": {
+                    "name": "gust",
+                    "stack": 39.5,
+                    "action": "folds",
+                    "pos": "Small Blind",
+                    "cards": [],
+                    "amountIn": 0.5
+                },
+                "3": {
+                    "name": "Portly23",
+                    "stack": 41.84,
+                    "action": "checks",
+                    "pos": "Big Blind",
+                    "cards": [],
+                    "amountIn": 2.3
+                },
+                "4": {
+                    "name": "GamesDean",
+                    "stack": 94.65,
+                    "action": "none",
+                    "pos": "EP",
+                    "cards": [],
+                    "amountIn": 0
+                },
+                "5": {
+                    "name": "Pimpika",
+                    "stack": 50.66,
+                    "action": "none",
+                    "pos": "MP",
+                    "cards": [],
+                    "amountIn": 0
+                }
+            },
+            {
+                "pot": 5.1,
+                "flop": [
+                    "4h",
+                    "2h",
+                    "2s"
+                ],
+                "turn": "5c"
+            },
+            258.18
         ]
     ]
 ]

@@ -75,10 +75,10 @@ def reset_player_actions(players):
     return cloned_players
 
 def load_data(file_path):
-    def getGameSegment(start_line=0,  previous_players=None, prev_pot=0, prev_total_wealth = 0 ):
+    def getGameSegment(start_line=0,  previous_players=None, prev_pot=0, prev_total_wealth = 0, prev_state={'pot': 0} ):
         with open(file_path, 'r') as file:
             players = previous_players if previous_players else {}
-            gameState = {'pot': 0}
+            gameState = prev_state
             totalWealth = prev_total_wealth
             pot = prev_pot
             button_seat = None
@@ -180,10 +180,11 @@ def load_data(file_path):
                     game_segments = []
                     start_line = lineCount
                     prev_pot = 0
+                    prev_state = {'pot': 0}
                     prev_total_wealth = 0
                     previous_players = None
                     while True:
-                        segment, next_line = getGameSegment(start_line, previous_players, prev_pot, prev_total_wealth)
+                        segment, next_line = getGameSegment(start_line, previous_players, prev_pot, prev_total_wealth, prev_state)
                         if segment is None:
                             break
                         game_segments.append(segment)
@@ -191,9 +192,9 @@ def load_data(file_path):
                         previous_players = reset_player_actions(previous_players)
                         start_line = next_line
                         prev_pot = state['pot']
+                        prev_state = state
                     all_games.append(game_segments)
             lineCount += 1
-            print(lineCount)
     output_json_path = file_path.rsplit('.txt', 1)[0] + '.json'
 
     with open(output_json_path, 'w') as json_file:
@@ -203,4 +204,3 @@ def load_data(file_path):
 # Example usage
 games = load_data("./data/IlxxxlI/d3.txt")
 # players = assign_table_positions(players)
-print(games)

@@ -175,3 +175,110 @@ Player Ice Bank Mice Elf does not show cards.Bets: 0. Collects: 0. Wins: 0.
 Player gust does not show cards.Bets: 0. Collects: 0. Wins: 0.
 Player AironVega does not show cards.Bets: 0. Collects: 0. Wins: 0.
 Game ended at: 2016/12/30 12:55:45
+
+
+Game started at: 2016/11/29 15:23:24
+Game ID: 787026881 0.25/0.50 (PRR) Garuda - 3 (Hold'em)
+Seat 8 is the button
+Seat 1: choiCES (87.40).
+Seat 2: hoocher (63.11).
+Seat 3: Parcker (97.82).
+Seat 4: IlxxxlI (31.57).
+Seat 5: VamosRafaFTW (49.21).
+Seat 6: dankmann (95.08).
+Seat 7: BlueSmoke (46.89).
+Seat 8: Maria_Pia (20).
+Player choiCES has small blind (0.25)
+Player hoocher has big blind (0.50)
+Player BlueSmoke wait BB
+Player choiCES received a card.
+Player choiCES received a card.
+Player hoocher received a card.
+Player hoocher received a card.
+Player Parcker received a card.
+Player Parcker received a card.
+Player IlxxxlI received card: [Ad]
+Player IlxxxlI received card: [Kd]
+Player VamosRafaFTW received a card.
+Player VamosRafaFTW received a card.
+Player dankmann received a card.
+Player dankmann received a card.
+Player Maria_Pia received a card.
+Player Maria_Pia received a card.
+Player Parcker folds
+Player IlxxxlI raises (1.75)
+Player VamosRafaFTW calls (1.75)
+Player dankmann calls (1.75)
+Player Maria_Pia folds
+Player choiCES folds
+Player hoocher folds
+*** FLOP ***: [10d 2h 5s]
+Player IlxxxlI checks
+Player VamosRafaFTW checks
+Player dankmann checks
+*** TURN ***: [10d 2h 5s] [2c]
+Player IlxxxlI checks
+Player VamosRafaFTW checks
+Player dankmann checks
+*** RIVER ***: [10d 2h 5s 2c] [4d]
+Player IlxxxlI checks
+Player VamosRafaFTW bets (3.40)
+Player dankmann calls (3.40)
+Player IlxxxlI folds
+Player dankmann mucks cards
+------ Summary ------
+Pot: 12.16. Rake 0.44. JP fee 0.20
+Board: [10d 2h 5s 2c 4d]
+Player choiCES does not show cards.Bets: 0.25. Collects: 0. Loses: 0.25.
+Player hoocher does not show cards.Bets: 0.50. Collects: 0. Loses: 0.50.
+Player Parcker does not show cards.Bets: 0. Collects: 0. Wins: 0.
+Player IlxxxlI does not show cards.Bets: 1.75. Collects: 0. Loses: 1.75.
+*Player VamosRafaFTW shows: Straight to 5 [3c Ac]. Bets: 5.15. Collects: 12.16. Wins: 7.01.
+Player dankmann mucks (does not show cards). Bets: 5.15. Collects: 0. Loses: 5.15.
+Player BlueSmoke does not show cards.Bets: 0. Collects: 0. Wins: 0.
+Player Maria_Pia does not show cards.Bets: 0. Collects: 0. Wins: 0.
+Game ended at: 2016/11/29 15:24:40
+
+Game started at: 2016/12/30 12:48:36
+Game ID: 808937195 0.50/1 (PRR) Kraken (short) - 3 (Hold'em)
+Seat 6 is the button
+Seat 1: gust (40).
+Seat 3: Portly23 (44.14).
+Seat 4: GamesDean (94.65).
+Seat 5: Pimpika (50.66).
+Seat 6: IlxxxlI (28.73).
+Player gust has small blind (0.50)
+Player Portly23 has big blind (1)
+Player gust received a card.
+Player gust received a card.
+Player Portly23 received a card.
+Player Portly23 received a card.
+Player GamesDean received a card.
+Player GamesDean received a card.
+Player Pimpika received a card.
+Player Pimpika received a card.
+Player IlxxxlI received card: [Ah]
+Player IlxxxlI received card: [8d]
+Player GamesDean folds
+Player Pimpika folds
+Player IlxxxlI raises (2.30)
+Player gust folds
+Player Portly23 calls (1.30)
+*** FLOP ***: [4h 2h 2s]
+Player Portly23 checks
+Player IlxxxlI checks
+*** TURN ***: [4h 2h 2s] [5c]
+Player Portly23 checks
+Player IlxxxlI bets (3.23)
+Player Portly23 folds
+Uncalled bet (3.23) returned to IlxxxlI
+Player IlxxxlI mucks cards
+------ Summary ------
+Pot: 4.85. Rake 0.17. JP fee 0.08
+Board: [4h 2h 2s 5c]
+Player gust does not show cards.Bets: 0.50. Collects: 0. Loses: 0.50.
+Player Portly23 does not show cards.Bets: 2.30. Collects: 0. Loses: 2.30.
+Player GamesDean does not show cards.Bets: 0. Collects: 0. Wins: 0.
+Player Pimpika does not show cards.Bets: 0. Collects: 0. Wins: 0.
+*Player IlxxxlI mucks (does not show cards). Bets: 2.30. Collects: 4.85. Wins: 2.55.
+Game ended at: 2016/12/30 12:49:54
