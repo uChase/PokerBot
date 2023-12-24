@@ -1,3 +1,55 @@
+Game started at: 2016/11/29 15:22:4
+Game ID: 787026454 0.50/1 (PRR) Kraken - 10 (Hold'em)
+Seat 3 is the button
+Seat 1: AironVega (101).
+Seat 2: aleks0v (100.23).
+Seat 3: ElvenEyes (205.91).
+Seat 4: IlxxxlI (40).
+Seat 5: WeakAndWeary (100).
+Seat 6: Sephiroth1 (101.50).
+Player IlxxxlI has small blind (0.50)
+Player WeakAndWeary has big blind (1)
+Player IlxxxlI received card: [7s]
+Player IlxxxlI received card: [Kh]
+Player WeakAndWeary received a card.
+Player WeakAndWeary received a card.
+Player Sephiroth1 received a card.
+Player Sephiroth1 received a card.
+Player AironVega received a card.
+Player AironVega received a card.
+Player aleks0v received a card.
+Player aleks0v received a card.
+Player ElvenEyes received a card.
+Player ElvenEyes received a card.
+Player Sephiroth1 folds
+Player AironVega folds
+Player aleks0v folds
+Player ElvenEyes folds
+Player IlxxxlI calls (0.50)
+Player WeakAndWeary checks
+*** FLOP ***: [Qh 2s 4s]
+Player IlxxxlI bets (1.26)
+Player WeakAndWeary calls (1.26)
+*** TURN ***: [Qh 2s 4s] [Qd]
+Player IlxxxlI checks
+Player WeakAndWeary checks
+*** RIVER ***: [Qh 2s 4s Qd] [5c]
+Player IlxxxlI checks
+Player WeakAndWeary bets (2.15)
+Player IlxxxlI folds
+Uncalled bet (2.15) returned to WeakAndWeary
+Player WeakAndWeary mucks cards
+------ Summary ------
+Pot: 4.30. Rake 0.16. JP fee 0.06
+Board: [Qh 2s 4s Qd 5c]
+Player AironVega does not show cards.Bets: 0. Collects: 0. Wins: 0.
+Player aleks0v does not show cards.Bets: 0. Collects: 0. Wins: 0.
+Player ElvenEyes does not show cards.Bets: 0. Collects: 0. Wins: 0.
+Player IlxxxlI does not show cards.Bets: 2.26. Collects: 0. Loses: 2.26.
+*Player WeakAndWeary mucks (does not show cards). Bets: 2.26. Collects: 4.30. Wins: 2.04.
+Player Sephiroth1 does not show cards.Bets: 0. Collects: 0. Wins: 0.
+Game ended at: 2016/11/29 15:23:33
+
 Game started at: 2016/11/29 15:25:37
 Game ID: 787027613 0.50/1 (PRR) Karkadann (Hold'em)
 Seat 7 is the button

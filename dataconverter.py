@@ -12,8 +12,10 @@ N_CARDS = 52
 
 #try later a 2d tensor for cards, might do better in training 
 import numpy as np
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-def card_to_encoder(card):
+
+def card_to_encoder(cards):
     # Define the suits and ranks
     suits = ['h', 'd', 'c', 's']  # hearts, diamonds, clubs, spades
     ranks = ['A', 'K', 'Q', 'J', '10', '9', '8', '7', '6', '5', '4', '3', '2']
@@ -21,13 +23,35 @@ def card_to_encoder(card):
     # Create a mapping from card to index with ranks grouped together
     card_to_index = {f"{rank}{suit}": index for index, (rank, suit) in enumerate(product(ranks, suits))}
 
-    # Initialize a 52-length binary array with uint8 data type
-    encoder = np.zeros(52, dtype=np.uint8)
+    # Initialize a 52-length binary array
+    encoder = [0] * 52
 
-    # Set the corresponding index to 1
-    encoder[card_to_index[card]] = 1
+    # Set the corresponding indices to 1 for each card
+    for card in cards:
+        encoder[card_to_index[card]] = 1
 
     return encoder
+
+def encode_player_action(action):
+    actions = ['folds', 'checks', 'calls', 'bets', 'raises']
+    one_hot_encoded = [0] * len(actions)
+
+    if action in actions:
+        index = actions.index(action)
+        one_hot_encoded[index] = 1
+
+    return one_hot_encoded
+
+def encode_player_position(position):
+    positions = ['Button', 'Small Blind', 'Big Blind', 'EP', 'MP', 'LP']
+    one_hot_encoded = [0] * len(positions)
+
+    if position in positions:
+        index = positions.index(position)
+        one_hot_encoded[index] = 1
+
+    return one_hot_encoded
+
 
 def getSeatData(line):
     pattern = re.compile(r'Seat (\d+): ([^\(]+) \(([\d.]+)\)')
@@ -63,7 +87,7 @@ def assign_table_positions(players_data):
             position = "LP"
         else:
             position = "MP"  # Assign MP to the remaining seats except the last one
-        seat_positions[current_seat] = {'name': players_data[current_seat]['name'], 'stack': players_data[current_seat]['stack'], 'action': players_data[current_seat]['action'], 'pos': position, 'cards': players_data[current_seat]['cards'], 'amountIn': players_data[current_seat]['amountIn']}
+        seat_positions[current_seat] = {'name': players_data[current_seat]['name'], 'stack': players_data[current_seat]['stack'], 'action': players_data[current_seat]['action'], 'pos': position, 'cards': players_data[current_seat]['cards'], 'amountIn': players_data[current_seat]['amountIn'], "active": players_data[current_seat]['active'], "currentPutIn": players_data[current_seat]['currentPutIn']}
 
     return seat_positions
 
@@ -75,7 +99,7 @@ def reset_player_actions(players):
     return cloned_players
 
 def load_data(file_path):
-    def getGameSegment(start_line=0,  previous_players=None, prev_pot=0, prev_total_wealth = 0, prev_state={'pot': 0} ):
+    def getGameSegment(start_line=0,  previous_players=None, prev_pot=0, prev_total_wealth = 0, prev_state={'pot': 0, 'flop': [], 'turn': '', 'river': ''} ):
         with open(file_path, 'r') as file:
             players = previous_players if previous_players else {}
             gameState = prev_state
@@ -83,7 +107,7 @@ def load_data(file_path):
             pot = prev_pot
             button_seat = None
             blinds_pattern = re.compile(r'Player (\w+) has (small|big) blind \(([\d.]+)\)')
-            bet_pattern = re.compile(r'Player (\w+) (raises|calls) \(([\d.]+)\)')
+            bet_pattern = re.compile(r'Player (\w+) (raises|calls|bets) \(([\d.]+)\)')
             card_pattern = re.compile(r'Player (\w+) received card: \[([\w\d]+)\]')
             safe_pattern = re.compile(r'Player (\w+) (folds|checks)')
             flop_pattern = re.compile(r'\*\*\* FLOP \*\*\*: \[([\w\d\s]+)\]')
@@ -101,9 +125,9 @@ def load_data(file_path):
                     if seat_data:
                         seat_number, player_name, money = seat_data
                         if seat_number == button_seat:
-                            players[seat_number] = {'name': player_name, 'stack': money, 'pos': "button", "action": "none", "cards": [], "amountIn": 0}
+                            players[seat_number] = {'name': player_name, 'stack': money, 'pos': "button", "action": "none", "cards": [], "amountIn": 0, "active": True, "currentPutIn": 0}
                         else:
-                            players[seat_number] = {'name': player_name, 'stack': money, 'pos': "no", "action": "none", "cards": [], "amountIn": 0}                        
+                            players[seat_number] = {'name': player_name, 'stack': money, 'pos': "no", "action": "none", "cards": [], "amountIn": 0, "active": True, "currentPutIn": 0}                        
                         totalWealth += money
                     elif 'is the button' in line:
                         button_seat = int(line.split()[1])  # Extract the seat number of the button
@@ -123,11 +147,11 @@ def load_data(file_path):
                     for player in players.values():
                         if player['name'] == player_name:
                             player['action'] = action
-                            if action in ['raises', 'calls']:
+                            if action in ['raises', 'calls', 'bets']:
                                 player['stack'] -= amount
                                 pot += amount
                                 player['amountIn'] += amount
-
+                                player['currentPutIn'] = amount
                             if player_name == 'IlxxxlI':
                                 if previous_players == None:
                                     players = assign_table_positions(players)
@@ -138,9 +162,14 @@ def load_data(file_path):
                      for player in players.values():
                         if player['name'] == player_name:
                             player['action'] = action
+                            if action == 'folds':
+                                player['active'] = False
+                                # play with this
+                                # totalWealth -= player['stack']
                             if player_name == 'IlxxxlI':
                                 if previous_players == None:
                                     players = assign_table_positions(players)
+                                player['currentPutIn'] = 0
                                 gameState['pot'] = pot
                                 return (players, gameState, totalWealth), i + 1
                 elif card_match := card_pattern.match(line):
@@ -149,7 +178,7 @@ def load_data(file_path):
                         for player in players.values():
                             if player['name'] == player_name:
                                 player['cards'].append(card)
-                                break
+                                continue
                 flop_match = flop_pattern.match(line)
                 if flop_match:
                     gameState['flop'] = flop_match.group(1).split()
@@ -168,6 +197,7 @@ def load_data(file_path):
 
     # Collect multiple game segments
     all_games = []
+    game_tensors = []
     with open(file_path, 'r') as file:
         game_segments = []
         start_line = 0
@@ -177,10 +207,10 @@ def load_data(file_path):
             if not line:
                 break
             if "Game started at" in line: 
-                    game_segments = []
+                    accumulated_tensor = torch.empty(0, 244)
                     start_line = lineCount
                     prev_pot = 0
-                    prev_state = {'pot': 0}
+                    prev_state = {'pot': 0, 'flop': [], 'turn': '', 'river': ''}
                     prev_total_wealth = 0
                     previous_players = None
                     while True:
@@ -189,18 +219,113 @@ def load_data(file_path):
                             break
                         game_segments.append(segment)
                         previous_players, state, prev_total_wealth = segment
+                        roundTensor = convert_round_to_tensor(previous_players, state, prev_total_wealth)
+                        if accumulated_tensor.nelement() == 0:
+                            accumulated_tensor = roundTensor
+                        else:
+                            accumulated_tensor = torch.cat((accumulated_tensor, roundTensor), dim=0)
+                        # print(segment)
                         previous_players = reset_player_actions(previous_players)
                         start_line = next_line
                         prev_pot = state['pot']
-                        prev_state = state
-                    all_games.append(game_segments)
+                        prev_state = state.copy()
+
+                    # all_games.append(game_segments)
+                    game_tensors.append(accumulated_tensor)
             lineCount += 1
+
     output_json_path = file_path.rsplit('.txt', 1)[0] + '.json'
+    print(game_tensors)
+    return game_tensors
+    # with open(output_json_path, 'w') as json_file:
+    #     json.dump(all_games, json_file, indent=4)
 
-    with open(output_json_path, 'w') as json_file:
-        json.dump(all_games, json_file, indent=4)
-                
+def convert_round_to_tensor(players, gameState, totalWealth):
+    holder = []
+    # print(players)
+    for seat in range(1, 10):
+        seat_key = int(seat)
+        zeros = [0] * 14
+        if seat_key in players:
 
-# Example usage
+            if players[seat_key]['name'] == 'IlxxxlI':
+                ### add zero vector
+                holder += zeros
+                continue
+            if players[seat_key]['active'] == False and players[seat_key]['action'] == 'none':
+                ### folded status only
+                holder += zeros
+                continue
+            #5 actions
+            actions = encode_player_action(players[seat_key]['action'])
+            # print("actions ")
+            # print(actions)
+            holder += actions
+            # print("chips")
+            chips = players[seat_key]['stack'] / totalWealth
+            # print(chips)
+            holder += [chips]
+            # print("amount in")
+            amountIn = players[seat_key]['amountIn'] / players[seat_key]['stack']
+            # print(amountIn)
+            holder += [amountIn]
+            # print("pos")
+            #5 positions
+            position = encode_player_position(players[seat_key]["pos"])
+            holder += position
+            # print(position)
+            # print("active")
+            active = [1] if players[seat_key]['active'] else [0]
+            holder += active
+            # print(active)
+            #13 per player
+            #117 total
+ 
+        else:
+            holder += zeros
+            # print("seat is not in ", seat)
+            #zeros
+    aiAction = []
+    for seat in range(1, 10):
+        seat_key = int(seat)
+        if seat_key in players:
+            if players[seat_key]['name'] == 'IlxxxlI':
+                #5 slots
+                # print("player pos")
+                position = encode_player_position(players[seat_key]["pos"])
+                holder += position
+                # print(position)
+                # print("player chips")
+                chips = (players[seat_key]['stack'] + players[seat_key]['currentPutIn']) / totalWealth
+                holder += [chips]
+                # print(chips)
+                # print("player amount in")
+                amountIn = (players[seat_key]['amountIn'] - players[seat_key]['currentPutIn']) / (players[seat_key]['stack'] + players[seat_key]['currentPutIn'])
+                holder += [amountIn]
+                # print(amountIn)
+                # print("player cards")
+                cards = card_to_encoder(players[seat_key]['cards'])
+                holder += cards
+                # print(cards)
+                # print("player action")
+                aiAction = encode_player_action(players[seat_key]['action'])
+                # print(aiAction)
+                break
+    cards = []
+    if len(gameState['flop']) == 3:
+        cards = gameState['flop']
+        if gameState['turn'] != '':
+            cards += [gameState['turn']]
+            if gameState['river'] != '':
+                cards += [gameState['river']]
+    holder += card_to_encoder(cards)
+    pot = gameState['pot'] / totalWealth
+    holder += [pot]
+    holder += aiAction
+    tensor = torch.tensor(holder, dtype=torch.float)
+    return tensor.unsqueeze(0)
+
+# # Example usage
 games = load_data("./data/IlxxxlI/d3.txt")
 # players = assign_table_positions(players)
+torch.save(games, 'game_tensors.pt')
