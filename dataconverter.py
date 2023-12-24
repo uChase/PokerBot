@@ -233,9 +233,9 @@ def load_data(file_path):
                     # all_games.append(game_segments)
                     game_tensors.append(accumulated_tensor)
             lineCount += 1
+            print(lineCount)
 
     output_json_path = file_path.rsplit('.txt', 1)[0] + '.json'
-    print(game_tensors)
     return game_tensors
     # with open(output_json_path, 'w') as json_file:
     #     json.dump(all_games, json_file, indent=4)
@@ -326,6 +326,6 @@ def convert_round_to_tensor(players, gameState, totalWealth):
     return tensor.unsqueeze(0)
 
 # # Example usage
-games = load_data("./data/IlxxxlI/d3.txt")
+games = load_data("./data/IlxxxlI/d1.txt")
 # players = assign_table_positions(players)
-torch.save(games, 'game_tensors.pt')
+torch.save(games, 'game_tensorsd1.pt')
