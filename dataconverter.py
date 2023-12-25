@@ -326,6 +326,6 @@ def convert_round_to_tensor(players, gameState, totalWealth):
     return tensor.unsqueeze(0)
 
 # # Example usage
-games = load_data("./data/IlxxxlI/d1.txt")
+games = load_data("./data/IlxxxlI/d3.txt")
 # players = assign_table_positions(players)
-torch.save(games, 'game_tensorsd1.pt')
+torch.save(games, 'game_tensorsd3.pt')
