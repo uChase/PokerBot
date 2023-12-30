@@ -32,8 +32,13 @@ def card_to_encoder(cards):
 
     return encoder
 
+
+#get rid of bets, keep only raises
 def encode_player_action(action):
-    actions = ['folds', 'checks', 'calls', 'bets', 'raises']
+    # actions = ['folds', 'checks', 'calls', 'bets', 'raises']
+    if action == 'bets':
+        action = 'raises'
+    actions = ['folds', 'checks', 'calls', 'raises']
     one_hot_encoded = [0] * len(actions)
 
     if action in actions:
@@ -54,7 +59,7 @@ def encode_player_position(position):
 
 
 def getSeatData(line):
-    pattern = re.compile(r'Seat (\d+): ([^\(]+) \(([\d.]+)\)')
+    pattern = re.compile(r'Seat (\d+): (.*?) \(([\d.]+)\)')
     match = pattern.match(line)
     if match:
         seat_number, player_name, money = match.groups()
@@ -64,6 +69,7 @@ def getSeatData(line):
 def assign_table_positions(players_data):
     # Find the button position
     button_seat = None
+    # print(players_data)
     for seat, data in players_data.items():
         if data['pos'] == 'button':
             button_seat = seat
@@ -121,7 +127,9 @@ def load_data(file_path):
                     return None, i
 
                 if line.startswith('Seat'):
+                    # print(line)
                     seat_data = getSeatData(line)
+                    # print(seat_data)
                     if seat_data:
                         seat_number, player_name, money = seat_data
                         if seat_number == button_seat:
@@ -233,7 +241,7 @@ def load_data(file_path):
                     # all_games.append(game_segments)
                     game_tensors.append(accumulated_tensor)
             lineCount += 1
-            print(lineCount)
+            # print(lineCount)
 
     output_json_path = file_path.rsplit('.txt', 1)[0] + '.json'
     return game_tensors
@@ -245,7 +253,7 @@ def convert_round_to_tensor(players, gameState, totalWealth):
     # print(players)
     for seat in range(1, 10):
         seat_key = int(seat)
-        zeros = [0] * 14
+        zeros = [0] * 13
         if seat_key in players:
 
             if players[seat_key]['name'] == 'IlxxxlI':
@@ -256,7 +264,7 @@ def convert_round_to_tensor(players, gameState, totalWealth):
                 ### folded status only
                 holder += zeros
                 continue
-            #5 actions
+            #4 actions
             actions = encode_player_action(players[seat_key]['action'])
             # print("actions ")
             # print(actions)
@@ -270,7 +278,7 @@ def convert_round_to_tensor(players, gameState, totalWealth):
             # print(amountIn)
             holder += [amountIn]
             # print("pos")
-            #5 positions
+            #6 positions
             position = encode_player_position(players[seat_key]["pos"])
             holder += position
             # print(position)
@@ -322,10 +330,11 @@ def convert_round_to_tensor(players, gameState, totalWealth):
     pot = gameState['pot'] / totalWealth
     holder += [pot]
     holder += aiAction
+    print(len(holder))
     tensor = torch.tensor(holder, dtype=torch.float)
     return tensor.unsqueeze(0)
 
 # # Example usage
-games = load_data("./data/IlxxxlI/d3.txt")
+games = load_data("./data/IlxxxlI/testing3.txt")
 # players = assign_table_positions(players)
-torch.save(games, 'game_tensorsd3.pt')
+torch.save(games, 't3.pt')
