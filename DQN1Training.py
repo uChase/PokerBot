@@ -9,14 +9,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 
-input_dim = 215
-output_dim = 3
-capacity = 100000
-learning_rate = 0.001
-gamma = 0.92
-epsilon_start = 1.0
-epsilon_end = 0.01
-epsilon_decay = 0.995
+
 
 
 class LSTM(nn.Module):
@@ -43,17 +36,25 @@ hidden_size = 256
 input_size = 239
 output_size = 5
 num_layers = 2
-learning_rate = 0.001
+learning_rate = 0.0001
 
 model = LSTM(input_size, hidden_size, num_layers, output_size).to(device)
 model.load_state_dict(torch.load('./models/LSTM2.pth'))
 
 epochs = 25000
 batch_size = 256
+input_dim = 215
+output_dim = 3
+capacity = 100000
+learning_rate = 0.001
+gamma = 0.99
+epsilon_start = 1.0
+epsilon_end = 0.01
+epsilon_decay = 0.9999999
 
 playerList = [pokergame.Player(str(i+1), 1000) for i in range(9)]
 agents = [DQN1.PokerAgent(input_dim, output_dim, capacity, learning_rate, gamma, epsilon_start, epsilon_end, epsilon_decay) for _ in range(9)]
-
+total_wealth = 9000
 
 #USES DELAYED REWARD ASSIGNMENT
 for epoch in range(epochs):
@@ -61,10 +62,12 @@ for epoch in range(epochs):
     if epoch % 50 == 0:
         print("Epoch: ", epoch)
     resetMoney = False
-    for player in playerList:
-        if player.get_money() <= 100:
-            resetMoney = True
-            break
+    # for player in playerList:
+    #     if player.get_money() <= 100:
+    #         resetMoney = True
+    #         break
+    if epoch % 15 == 0:
+        resetMoney = True
     if resetMoney:
         for player in playerList:
             player.set_money(1000)
@@ -72,6 +75,9 @@ for epoch in range(epochs):
     for player in playerList:
         game.add_player(player)
     gameOver = False
+    enough = game.check_enough()
+    if not enough:
+        continue
     currplayer, cardStatus, community_cards, pot, roundIn = game.startGame()
     viewable_cards = []
     state_action_pairs = {agent_id: [] for agent_id in range(len(agents))}
@@ -96,7 +102,7 @@ for epoch in range(epochs):
                 viewable_cards = community_cards[:5]
 
         
-        lstmInput = pokerutils.convert_round_to_tensor_LSTM(game.players, viewable_cards, pot, roundIn, currplayer)
+        lstmInput = pokerutils.convert_round_to_tensor_LSTM(game.players, viewable_cards, pot, roundIn, currplayer, game.totalWealth)
         lstmOut = []
         with torch.no_grad():
             hn = currplayer["player"].get_hn()
@@ -110,11 +116,11 @@ for epoch in range(epochs):
             softmax_output = softmax(round_output)
             lstmOut = softmax_output.squeeze().tolist()
 
-        stateTensor = pokerutils.convert_round_to_tesnor_DQN(game.players, viewable_cards, pot, roundIn, currplayer, lstmOut)
+        stateTensor = pokerutils.convert_round_to_tesnor_DQN(game.players, viewable_cards, pot, roundIn, currplayer, lstmOut, game.totalWealth)
         agent_id = int(currplayer["player"].get_name()) - 1
         agent = agents[agent_id]
         move = agent.play(stateTensor)
-        state_action_pairs[agent_id].append((stateTensor, move))
+        state_action_pairs[agent_id].append((stateTensor, move, currplayer["player"].get_money(), pot, roundIn ))
         
 
         max_index = move
@@ -133,15 +139,23 @@ for epoch in range(epochs):
     for player in players:
         agent_id = int(player['player'].get_name()) - 1
         agent = agents[agent_id]
-        reward = player['Q']
+        endReward = player['Q']
+        endResult = player['result']
         for i in range(len(state_action_pairs[agent_id])):
-            state, action = state_action_pairs[agent_id][i]
+            state, action, bankroll, pot, roundIn = state_action_pairs[agent_id][i]
             done = i == len(state_action_pairs[agent_id]) - 1
             next_state = torch.zeros_like(state) if done else state_action_pairs[agent_id][i + 1][0]
+            reward = 0
+            if done:
+                reward = endReward
+            else:
+                reward = pokerutils.calculate_reward(bankroll, action, endResult, pot, roundIn, total_wealth)
+            reward *= (10 ** 6)
+            # print(reward)
             agent.update_replay_buffer(state, action, next_state, done, reward)
     
     for agent in agents:
         agent.train(batch_size)
 
 for i, agent in enumerate(agents):
-    agent.save(f"./models/{i}.pth")
+    agent.save(f"./models/DQN_{i}_2.pth")

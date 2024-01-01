@@ -40,13 +40,15 @@ output_dim = 3
 playerList = [pokergame.Player(str(i+1), 1000) for i in range(9)]
 models = [DQN1.DQN(input_dim, output_dim).to(device) for _ in range(len(playerList))]
 for i in range(len(models)):
-    models[i].load_state_dict(torch.load('./models/DQN1_' + str(i) + '.pth'))
+    models[i].load_state_dict(torch.load('./models/DQN_' + str(i) + '_2.pth'))
     models[i].eval()
 
-games = 10
+games = 1000
 numraise = 0
 for game in range(games):
     players = []
+    state_action_pairs = {p_id: [] for p_id in range(len(playerList))}
+
     end = False
     for player in playerList:
         if player.get_money() <=  50:
@@ -56,11 +58,15 @@ for game in range(games):
     game = pokergame.PokerGame()
     for player in playerList:
         game.add_player(player)
+    enough = game.check_enough()
+    if not enough:
+        continue
     gameOver = False
     currplayer, cardStatus, community_cards, pot, roundIn = game.startGame()
     viewable_cards = []
 
     while not gameOver:
+        # print("round")
         gameStatus, currplayer, players, pot, cardStatus, roundIn = game.check_round_redo()
         if gameStatus == "end":            
             gameOver = True
@@ -78,6 +84,7 @@ for game in range(games):
                 viewable_cards = community_cards[:5]
         lstmInput = pokerutils.convert_round_to_tensor_LSTM(game.players, viewable_cards, pot, roundIn, currplayer)
         lstmOut = []
+        lstmIndex = 0
         with torch.no_grad():
             hn = currplayer["player"].get_hn()
             cn = currplayer["player"].get_cn()
@@ -89,20 +96,50 @@ for game in range(games):
             softmax = nn.Softmax(dim=1)
             softmax_output = softmax(round_output)
             lstmOut = softmax_output.squeeze().tolist()
+            lstmIndex = torch.argmax(round_output).item()
         stateTensor = pokerutils.convert_round_to_tesnor_DQN(game.players, viewable_cards, pot, roundIn, currplayer, lstmOut)
         stateTensor = stateTensor.to(device)
         q_values = models[int(currplayer["player"].get_name())-1](stateTensor).to(device)
         action = torch.argmax(q_values).item()
+        state_action_pairs[int(currplayer["player"].get_name())-1].append((stateTensor, action, currplayer["player"].get_money(), pot, roundIn ))
         max_index = action
         move = ""
-        if max_index == 0:
-            move = "fold"
-        elif max_index == 1:
-            move = "c"
-        elif max_index == 2:
-            numraise += 1
-            move = "raise"
+        #using raw lstm, to disable this just make it 11 instead of 1
+        if currplayer["player"].get_name() == "11":
+            if lstmIndex == 0:
+                move = "fold"
+            elif lstmIndex == 1 or lstmIndex == 2:
+                move = "c"
+            elif lstmIndex == 3 or lstmIndex == 4:
+                move = "raise"
+        else:
+            if max_index == 0:
+                move = "fold"
+            elif max_index == 1:
+                move = "c"
+            elif max_index == 2:
+                numraise += 1
+                move = "raise"
         gameStatus, currplayer, players, pot, cardStatus, roundIn = game.next_turn(move)
-    print(players)
-    print("community cards: ", community_cards)
-print(numraise)
+    # for player in game.players:
+    #     print(player["player"].get_name(), player["player"].get_money(), player["Q"] * (10 ** 6), player["status"], player["holeCards"])
+    # print(community_cards)
+    # for player in players:
+    #     agent_id = int(player['player'].get_name()) - 1
+    #     endReward = player['Q']
+    #     endResult = player['result']
+    #     print(agent_id + 1)
+    #     for i in range(len(state_action_pairs[agent_id])):
+    #         state, action, bankroll, pot, roundIn = state_action_pairs[agent_id][i]
+    #         done = i == len(state_action_pairs[agent_id]) - 1
+    #         next_state = torch.zeros_like(state) if done else state_action_pairs[agent_id][i + 1][0]
+    #         reward = 0
+    #         if done:
+    #             reward = endReward
+    #         else:
+    #             reward = pokerutils.calculate_reward(bankroll, action, endResult, pot, roundIn, 9000)
+    #         reward *= (10 ** 6)
+    #         print(reward)
+for player in playerList:
+    print(player.get_name(), player.get_money())
+#Model DQN_4_2 and DQN_2_2 outpreforms all other models

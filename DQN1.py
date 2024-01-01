@@ -2,6 +2,8 @@ import random
 import torch
 from collections import deque
 import torch.nn as nn
+import torch.nn.functional as F
+
 import torch.optim as optim
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -29,15 +31,20 @@ class ReplayBuffer:
     def __len__(self):
         return len(self.buffer)
 
+#implement attention maybe? maybe shape state data into convolutions?
+
 class DQN(nn.Module):
     def __init__(self, input_dim, output_dim):
         super(DQN, self).__init__()
         self.fc1 = nn.Linear(input_dim, 256)
-        self.fc2 = nn.Linear(256, 64)
-        self.fc3 = nn.Linear(64, output_dim)
+        self.fc2 = nn.Linear(256, 128)
+        self.attention = nn.Linear(256, 256)
+        self.fc3 = nn.Linear(128, output_dim)
 
     def forward(self, x):
         x = torch.relu(self.fc1(x))
+        attention_weights = F.softmax(self.attention(x), dim=-1)
+        x = x * attention_weights
         x = torch.relu(self.fc2(x))
         x = self.fc3(x)
         return x
@@ -119,7 +126,7 @@ class PokerAgent:
 
     def update_replay_buffer(self, state, action, next_state, done, end_of_game_reward=None):
         # If the game is over, use the end-of-game reward
-        
+
         if done and end_of_game_reward is not None:
             reward = end_of_game_reward
         else:

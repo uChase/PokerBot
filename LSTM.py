@@ -42,6 +42,7 @@ class LSTM(nn.Module):
 hidden_size = 256
 # 244 features - 5 at the end which are the labels
 # input_size = 239
+# output_size = 5
 # new input size 230, since 234 features - 4 at the end which are the labels
 input_size = 230
 output_size = 4

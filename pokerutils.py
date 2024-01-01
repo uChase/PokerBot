@@ -190,6 +190,9 @@ def convert_round_to_tensor_LSTM(players, community_cards, pot, roundIn, current
     holder = []
     for seat in range(0, 9):
         zeros = [0] * 14
+        if seat >= len(players):
+            holder += zeros
+            continue
         if players[seat]['player'].get_name() == current_player['player'].get_name():
             holder += zeros
             continue
@@ -234,17 +237,20 @@ def convert_round_to_tensor_LSTM(players, community_cards, pot, roundIn, current
 
 #Encode State for DQN
 def convert_round_to_tesnor_DQN(players, community_cards, pot, roundIn, current_player, LSTM_output, totalWealth=9000):
+
     holder = []
     curName = current_player['player'].get_name()
-    for seat in range(0, 10):
+    for seat in range(0, 9):
+        found = False
         zeros = [0] * 12
-        if str(seat) == curName:
+        if str(seat + 1) == curName:
             continue
-        for i in range(0, 9):
-            if players[i]['player'].get_name() == str(seat):
+        for i in range(len(players)):
+            if players[i]['player'].get_name() == str(seat + 1):
                 if players[i]['status'] == 'out' and players[i]['action'] == 'none':
                     holder += zeros
-                    continue
+                    found = True
+                    break
                 # 3 actions
                 holder += encode_player_action_rl(players[i]['action'])
                 holder += [players[i]['player'].get_money() / totalWealth]
@@ -253,7 +259,10 @@ def convert_round_to_tesnor_DQN(players, community_cards, pot, roundIn, current_
                 holder += encode_player_position(players[i]['position'])
                 active = [1] if players[i]['status'] == 'active' else [0]
                 holder += active
+                found = True
                 break
+        if not found:
+            holder += zeros
     position = encode_player_position(current_player['position'])
     holder += position
     chips = current_player['player'].get_money() / totalWealth
@@ -263,16 +272,61 @@ def convert_round_to_tesnor_DQN(players, community_cards, pot, roundIn, current_
     #maybe add roundIn?
     cards = card_to_encoder(current_player['holeCards'])
     holder += cards
-    cards = card_to_encoder(community_cards)
-    holder += cards
+    comCards = card_to_encoder(community_cards)
+    holder += comCards
     pot = pot / totalWealth
     holder += [pot]
-    #change this up maybe
-    buyIn = (roundIn - current_player['roundIn']) / current_player['player'].get_money()
+    #change this up maybe, divide by either player money or totalWealth
+    buyIn = (roundIn - current_player['roundIn']) / totalWealth
     holder += [buyIn]
     holder += LSTM_output
     tensor = torch.tensor(holder, dtype=torch.float)
     return tensor.unsqueeze(0)
 
-def calculate_reward(player, state, action, next_state, done ):
-    pass
+def calculate_reward( bankroll, action, result, pot, roundIn, total_wealth):
+    #action = 0 fold, 1 call, 2 raise
+
+
+    WIN_SCALE = 0.6
+    LOSS_SCALE = -0.3
+    BAD_FOLD_SCALE = -0.2
+    GOOD_FOLD_SCALE = 0.15
+
+    if bankroll <= 0:
+        # Penalize bankruptcy heavily
+        return -2
+    
+    bankroll_factor =   bankroll / total_wealth
+    pot_factor = pot / total_wealth
+    roundIn_factor = roundIn / total_wealth
+    if roundIn_factor == 0:
+        roundIn_factor = 1
+
+    if result == "win":
+        if action == 1:
+            return WIN_SCALE * bankroll_factor * pot_factor 
+        elif action == 2:
+            return WIN_SCALE * bankroll_factor * pot_factor
+    elif result == "loss":
+        if action == 1:
+            return  LOSS_SCALE * bankroll_factor * pot_factor 
+        elif action == 2:
+            return -0.99 * bankroll_factor * pot_factor 
+    elif result == "bad fold":
+        if action == 1:
+            return BAD_FOLD_SCALE * bankroll_factor * pot_factor 
+        elif action == 2:
+            return -0.99 * bankroll_factor * pot_factor
+    elif result == "good fold":
+        if action == 1:
+            return GOOD_FOLD_SCALE * bankroll_factor * pot_factor
+        elif action == 2:
+            return 0.05 * bankroll_factor * pot_factor 
+    elif result == "solo win":
+        if action == 1:
+            return 0.25 * bankroll_factor * pot_factor 
+        elif action == 2:
+            return 0.06 * bankroll_factor * pot_factor 
+    elif result == "bankrupt":
+        return -10
+    return 0

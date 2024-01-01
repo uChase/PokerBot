@@ -61,7 +61,8 @@ currplayer, cardStatus, community_cards, pot, roundIn = game.startGame()
 viewable_cards = []
 
 while not gameOver:
-    
+    for player in game.players:
+        print(player["player"].get_name(), player["player"].get_money())
     if currplayer["status"] == "out":
         gameStatus, currplayer, players, pot, cardStatus, roundIn = game.next_turn("null")
         continue
@@ -84,7 +85,6 @@ while not gameOver:
             
             
     stateTensor = pokerutils.convert_round_to_tesnor_DQN(game.players, viewable_cards, pot, roundIn, currplayer, lstmOut)
-    print(stateTensor.shape)
     gameStatus, currplayer, players, pot, cardStatus, roundIn = game.check_round_redo()
     if gameStatus == "redo":
         print("redo")
