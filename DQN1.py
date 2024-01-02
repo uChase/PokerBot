@@ -124,6 +124,10 @@ class PokerAgent:
                 action = torch.argmax(q_values).item()
         return action
 
+    def loadModel(self, filepath):
+        self.model.load_state_dict(torch.load(filepath))
+        self.model.train()
+
     def update_replay_buffer(self, state, action, next_state, done, end_of_game_reward=None):
         # If the game is over, use the end-of-game reward
 

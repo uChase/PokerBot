@@ -7,11 +7,6 @@ import torch.nn as nn
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-
-
-
-
-
 class LSTM(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers, output_size):
         super(LSTM, self).__init__()
@@ -41,7 +36,8 @@ learning_rate = 0.0001
 model = LSTM(input_size, hidden_size, num_layers, output_size).to(device)
 model.load_state_dict(torch.load('./models/LSTM2.pth'))
 
-epochs = 25000
+
+epochs = 100000
 batch_size = 256
 input_dim = 215
 output_dim = 3
@@ -53,7 +49,10 @@ epsilon_end = 0.01
 epsilon_decay = 0.9999999
 
 playerList = [pokergame.Player(str(i+1), 1000) for i in range(9)]
-agents = [DQN1.PokerAgent(input_dim, output_dim, capacity, learning_rate, gamma, epsilon_start, epsilon_end, epsilon_decay) for _ in range(9)]
+agent = DQN1.PokerAgent(input_dim, output_dim, capacity, learning_rate, gamma, epsilon_start, epsilon_end, epsilon_decay)
+
+agent.loadModel('./models/DQN_4_2.pth')
+
 total_wealth = 9000
 
 for epoch in range(epochs):
@@ -74,8 +73,7 @@ for epoch in range(epochs):
         continue
     currplayer, cardStatus, community_cards, pot, roundIn = game.startGame()
     viewable_cards = []
-    state_action_pairs = {agent_id: [] for agent_id in range(len(agents))}
-
+    state_action_pairs =  [] 
     while not gameOver:
         gameStatus, currplayer, players, pot, cardStatus, roundIn = game.check_round_redo()
         if gameStatus == "end":            
@@ -84,8 +82,6 @@ for epoch in range(epochs):
         if currplayer["status"] == "out":
             gameStatus, currplayer, players, pot, cardStatus, roundIn = game.next_turn("null")
             continue
-
-        
         if gameStatus == "redo":
             if cardStatus == 1:
                 viewable_cards = community_cards[:3]
@@ -93,10 +89,9 @@ for epoch in range(epochs):
                 viewable_cards = community_cards[:4]
             elif cardStatus == 3:
                 viewable_cards = community_cards[:5]
-
-        
         lstmInput = pokerutils.convert_round_to_tensor_LSTM(game.players, viewable_cards, pot, roundIn, currplayer, game.totalWealth)
         lstmOut = []
+        lstmIndex = 0
         with torch.no_grad():
             hn = currplayer["player"].get_hn()
             cn = currplayer["player"].get_cn()
@@ -108,47 +103,46 @@ for epoch in range(epochs):
             softmax = nn.Softmax(dim=1)
             softmax_output = softmax(round_output)
             lstmOut = softmax_output.squeeze().tolist()
-
-        stateTensor = pokerutils.convert_round_to_tesnor_DQN(game.players, viewable_cards, pot, roundIn, currplayer, lstmOut, game.totalWealth)
-        agent_id = int(currplayer["player"].get_name()) - 1
-        agent = agents[agent_id]
-        move = agent.play(stateTensor)
-        state_action_pairs[agent_id].append((stateTensor, move, currplayer["player"].get_money(), pot, roundIn ))
-        
-
-        max_index = move
-        if max_index == 0:
-            move = "fold"
-        elif max_index == 1:
-            move = "c"
-        elif max_index == 2:
-            move = "raise"
-
-
-        
+            lstmIndex = torch.argmax(softmax_output).item()
+        #checking if it is the DQN turn
+        move = None
+        if currplayer['player'].get_name() == '5':
+            stateTensor = pokerutils.convert_round_to_tesnor_DQN(game.players, viewable_cards, pot, roundIn, currplayer, lstmOut, game.totalWealth)
+            stateTensor = stateTensor.to(device)
+            move = agent.play(stateTensor)
+            state_action_pairs.append((stateTensor, move, currplayer["player"].get_money(), pot, roundIn ))
+            if move == 0:
+                move = "fold"
+            elif move == 1:
+                move = "c"
+            elif move == 2:
+                move = "raise"
+        else:
+            if lstmIndex == 0:
+                move = "fold"
+            elif lstmIndex == 1 or lstmIndex == 2:
+                move = "c"
+            elif lstmIndex == 3 or lstmIndex == 4:
+                move = "raise"
         gameStatus, currplayer, players, pot, cardStatus, roundIn = game.next_turn(move)
-    
+
     print("game finished " + str(epoch))
     for player in players:
-        agent_id = int(player['player'].get_name()) - 1
-        agent = agents[agent_id]
-        endReward = player['Q']
-        endResult = player['result']
-        for i in range(len(state_action_pairs[agent_id])):
-            state, action, bankroll, pot, roundIn = state_action_pairs[agent_id][i]
-            done = i == len(state_action_pairs[agent_id]) - 1
-            next_state = torch.zeros_like(state) if done else state_action_pairs[agent_id][i + 1][0]
-            reward = 0
-            if done:
-                reward = endReward
-            else:
-                reward = pokerutils.calculate_reward(bankroll, action, endResult, pot, roundIn, total_wealth)
-            reward *= (10 ** 6)
-            # print(reward)
-            agent.update_replay_buffer(state, action, next_state, done, reward)
-    
-    for agent in agents:
-        agent.train(batch_size)
+        if player["player"].get_name() == "5":
+            endReward = player['Q']
+            endResult = player['result']
+            for i in range(len(state_action_pairs)):
+                state, action, bankroll, pot, roundIn = state_action_pairs[i]
+                done = i == len(state_action_pairs) - 1
+                next_state = torch.zeros_like(state) if done else state_action_pairs[i + 1][0]
+                reward = 0
+                if done:
+                    reward = endReward
+                else:
+                    reward = pokerutils.calculate_reward(bankroll, action, endResult, pot, roundIn, total_wealth)
+                reward *= (10 ** 6)
+                # print(reward)
+                agent.update_replay_buffer(state, action, next_state, done, reward)
+    agent.train(batch_size)
 
-for i, agent in enumerate(agents):
-    agent.save(f"./models/DQN_{i}_2.pth")
+agent.save('./models/DQN_V_LSTM.pth')
