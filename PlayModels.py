@@ -61,7 +61,7 @@ for i in range(9):
     if userInput == "1":
         models.append(DQN1.DQN(input_dim, output_dim).to(device))
         models[i].load_state_dict(
-            torch.load("./models/DQN_V_LSTM.pth"), map_location=device
+            torch.load("./models/DQN_V_LSTM.pth", map_location=device)
         )
         models[i].eval()
     elif userInput == "2":
@@ -69,7 +69,7 @@ for i in range(9):
     elif userInput == "3":
         models.append(DQN1.DQN(input_dim, output_dim).to(device))
         models[i].load_state_dict(
-            torch.load("./models/DQN_4_2.pth"), map_location=device
+            torch.load("./models/DQN_4_2.pth", map_location=device)
         )
         models[i].eval()
     elif userInput == "4":
