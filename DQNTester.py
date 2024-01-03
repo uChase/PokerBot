@@ -33,7 +33,9 @@ output_size = 5
 num_layers = 2
 learning_rate = 0.001
 model = LSTM(input_size, hidden_size, num_layers, output_size).to(device)
-model.load_state_dict(torch.load("./models/LSTM2.pth"))
+model.load_state_dict(
+    torch.load("./models/LSTM2.pth", map_location=torch.device(device))
+)
 
 # INIT DQN
 input_dim = 215
@@ -43,10 +45,14 @@ playerList = [pokergame.Player(str(i + 1), 1000) for i in range(9)]
 models = [DQN1.DQN(input_dim, output_dim).to(device) for _ in range(len(playerList))]
 for i in range(len(models)):
     if i == 4:
-        models[i].load_state_dict(torch.load("./models/DQN_V_LSTM.pth"))
+        models[i].load_state_dict(
+            torch.load("./models/DQN_V_LSTM.pth", map_location=torch.device(device))
+        )
         models[i].eval()
     else:
-        models[i].load_state_dict(torch.load("./models/DQN_" + str(i) + "_2.pth"))
+        models[i].load_state_dict(
+            torch.load("./models/DQN_4_2.pth", map_location=torch.device(device))
+        )
         models[i].eval()
 
 

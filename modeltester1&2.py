@@ -3,7 +3,7 @@ import torch.nn as nn
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-
+# THIS WILL NOT WORK ON MAC CAUSE OF FILE DIRECTORY, CHANGE IF YOU WANT IT TO WORK ON MAC
 loaded_test1 = torch.load("data\IlxxxlI\\testing_tensors1.pt")
 loaded_test2 = torch.load("data\IlxxxlI\\testing_tensors2.pt")
 loaded_test3 = torch.load("data\IlxxxlI\\testing_tensors3.pt")
@@ -39,7 +39,9 @@ num_layers = 2
 learning_rate = 0.001
 
 model = LSTM(input_size, hidden_size, num_layers, output_size).to(device)
-model.load_state_dict(torch.load('./models/LSTM2.pth'))
+model.load_state_dict(
+    torch.load("./models/LSTM2.pth", map_location=torch.device(device))
+)
 
 model.eval()  # Set the model to evaluation mode
 
@@ -67,8 +69,13 @@ with torch.no_grad():
             target_one_hot = round_tensor[-5:].unsqueeze(0)
             target_indices = torch.argmax(target_one_hot, dim=1).to(device)
 
-            round_output, (hn, cn) = model(input_features, (hn.detach() if hn is not None else None,
-                                                           cn.detach() if cn is not None else None))
+            round_output, (hn, cn) = model(
+                input_features,
+                (
+                    hn.detach() if hn is not None else None,
+                    cn.detach() if cn is not None else None,
+                ),
+            )
 
             _, predicted_indices = torch.max(round_output, dim=1)
 
@@ -97,7 +104,7 @@ with torch.no_grad():
                 elif target_indices.item() == 4:
                     raise_correct += 1
             total_samples += target_indices.size(0)
-            
+
 accuracy = total_correct / total_samples if total_samples > 0 else 0
 print(f"Testing Accuracy: {accuracy:.4f}")
 print("Fold False: ", fold_false)
@@ -112,9 +119,15 @@ print("Call Correct: ", call_correct)
 print("Bets Correct: ", bets_correct)
 print("Raise Correct: ", raise_correct)
 
-print("percentage of folds correct" , (fold_correct/(fold_correct + fold_false))*100)
-print("percentage of checks correct" , (check_correct/(check_correct + check_false))*100)
-print("percentage of calls correct" , (call_correct/(call_correct + call_false))*100)
-print("percentage of bets correct" , (bets_correct/(bets_correct + bets_false))*100)
-print("percentage of raises correct" , (raise_correct/(raise_correct + raise_false))*100)
+print("percentage of folds correct", (fold_correct / (fold_correct + fold_false)) * 100)
+print(
+    "percentage of checks correct",
+    (check_correct / (check_correct + check_false)) * 100,
+)
+print("percentage of calls correct", (call_correct / (call_correct + call_false)) * 100)
+print("percentage of bets correct", (bets_correct / (bets_correct + bets_false)) * 100)
+print(
+    "percentage of raises correct",
+    (raise_correct / (raise_correct + raise_false)) * 100,
+)
 print("games num:", numGames)
