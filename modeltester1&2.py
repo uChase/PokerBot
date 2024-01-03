@@ -56,14 +56,14 @@ call_correct = 0
 bets_correct = 0
 raise_correct = 0
 
-
+numGames = 0
 with torch.no_grad():
     for test_tensor in all_test_tensors:
+        numGames += 1
         hn, cn = None, None
 
         for round_tensor in test_tensor:
             input_features = round_tensor[:-5].unsqueeze(0).unsqueeze(0).to(device)
-            print(input_features.shape)
             target_one_hot = round_tensor[-5:].unsqueeze(0)
             target_indices = torch.argmax(target_one_hot, dim=1).to(device)
 
@@ -117,3 +117,4 @@ print("percentage of checks correct" , (check_correct/(check_correct + check_fal
 print("percentage of calls correct" , (call_correct/(call_correct + call_false))*100)
 print("percentage of bets correct" , (bets_correct/(bets_correct + bets_false))*100)
 print("percentage of raises correct" , (raise_correct/(raise_correct + raise_false))*100)
+print("games num:", numGames)
