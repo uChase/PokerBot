@@ -40,23 +40,26 @@ model.load_state_dict(
 # INIT DQN
 input_dim = 215
 output_dim = 3
+batch_size = 16
 
 playerList = []
 models = []
-valid_options = ["1", "2", "3", "4", "5"]
+agents = []
+valid_options = ["1", "2", "3", "4", "5", "6"]
 print(
-    "There are 9 slots for players. You can choose to have a human player in one of the slots. If you do not want any more players, enter 5 in the slot. I reccomend you enter 1, 2, 2, 3, 4, 5, as a game with 5 players is easiest to follow on the terminal."
+    "There are 9 slots for players. You can choose to have a human player in one of the slots. If you do not want any more players, enter 5 in the slot. I reccomend you enter 1, 2, 2, 3, 5, 6, as a game with 5 players is easiest to follow on the terminal."
 )
+total_wealth = 0
 for i in range(9):
     while True:
         userInput = input(
-            f"Player {i+1}: Enter 1 for adapted DQN, 2 for LSTM (emulated player), 3 for raw DQN (not adapted), 4 for human player (you), 5 for no one in this slot:  "
+            f"Player {i+1}: Enter 1 for adapted DQN, 2 for LSTM (emulated player), 3 for raw DQN (not adapted), 4 for learning DQN (model that learns against others, experimental, very high learn rate), 5 for human player (you), 6 for no one in this slot:  "
         )
         if userInput in valid_options:
             break
         else:
             print("Invalid option. Please try again.")
-    if userInput == "5":
+    if userInput == "6":
         break
     if userInput == "1":
         models.append(DQN1.DQN(input_dim, output_dim).to(device))
@@ -64,24 +67,35 @@ for i in range(9):
             torch.load("./models/DQN_V_LSTM.pth", map_location=device)
         )
         models[i].eval()
+        agents.append("null")
     elif userInput == "2":
         models.append("LSTM")
+        agents.append("null")
     elif userInput == "3":
         models.append(DQN1.DQN(input_dim, output_dim).to(device))
         models[i].load_state_dict(
             torch.load("./models/DQN_4_2.pth", map_location=device)
         )
         models[i].eval()
+        agents.append("null")
     elif userInput == "4":
+        models.append("agent")
+        agents.append(
+            DQN1.PokerAgent(input_dim, output_dim, 100000, 0.4, 0.99, 1.0, 0.01, 0.8)
+        )
+    elif userInput == "5":
         models.append("human")
+        agents.append("null")
     else:
         models.append("none")
     playerList.append(pokergame.Player(str(i + 1), 1000))
+    total_wealth += 1000
 
 print(
     "Starting game...\n You have 3 there are three availible moves: fold, c, and raise. \n fold is folding obviously\n c is either check or call depending on context \n raise will raise 15$ \n you will be asked to input your move in the form of a number 1, 2, or 3 \n 1 for fold, 2 for c, 3 for raise"
 )
 finished = False
+
 while not finished:
     players = []
     game = pokergame.PokerGame()
@@ -96,6 +110,7 @@ while not finished:
     currplayer, cardStatus, community_cards, pot, roundIn = game.startGame()
     viewable_cards = []
     firstRound = True
+    state_action_pairs = {agent_id: [] for agent_id in range(len(agents))}
     while not gameOver:
         (
             gameStatus,
@@ -229,6 +244,35 @@ while not finished:
                         cardStatus,
                         roundIn,
                     ) = game.next_turn("raise")
+            elif models[int(currplayer["player"].get_name()) - 1] == "agent":
+                stateTensor = pokerutils.convert_round_to_tesnor_DQN(
+                    game.players, viewable_cards, pot, roundIn, currplayer, lstmOut
+                )
+                stateTensor = stateTensor.to(device)
+                agent_id = int(currplayer["player"].get_name()) - 1
+                agent = agents[agent_id]
+                move = agent.play(stateTensor)
+                state_action_pairs[agent_id].append(
+                    (stateTensor, move, currplayer["player"].get_money(), pot, roundIn)
+                )
+                max_index = move
+                if max_index == 0:
+                    move = "fold"
+                    print(f"Player {currplayer['player'].get_name()} folded")
+                elif max_index == 1:
+                    move = "c"
+                    print(f"Player {currplayer['player'].get_name()} called")
+                elif max_index == 2:
+                    move = "raise"
+                    print(f"Player {currplayer['player'].get_name()} raised $15")
+                (
+                    gameStatus,
+                    currplayer,
+                    players,
+                    pot,
+                    cardStatus,
+                    roundIn,
+                ) = game.next_turn(move)
             else:
                 stateTensor = pokerutils.convert_round_to_tesnor_DQN(
                     game.players, viewable_cards, pot, roundIn, currplayer, lstmOut
@@ -270,6 +314,36 @@ while not finished:
             print(
                 f"Player {player.get_name()} lost ${initialPlayerMoney[int(player.get_name())-1] - player.get_money()}"
             )
+    for player in players:
+        agent_id = int(player["player"].get_name()) - 1
+        agent = agents[agent_id]
+        if agent == "null":
+            continue
+        endReward = player["Q"]
+        endResult = player["result"]
+        for i in range(len(state_action_pairs[agent_id])):
+            state, action, bankroll, pot, roundIn = state_action_pairs[agent_id][i]
+            done = i == len(state_action_pairs[agent_id]) - 1
+            next_state = (
+                torch.zeros_like(state)
+                if done
+                else state_action_pairs[agent_id][i + 1][0]
+            )
+            reward = 0
+            if done:
+                reward = endReward
+            else:
+                reward = pokerutils.calculate_reward(
+                    bankroll, action, endResult, pot, roundIn, total_wealth
+                )
+            reward *= 10**6
+            # print(reward)
+            agent.update_replay_buffer(state, action, next_state, done, reward)
+    for i, agent in enumerate(agents):
+        if agent == "null":
+            continue
+        agent.train(batch_size)
+        print("Trained Player ", i + 1)
     print("Would you like to play again? (y/n)")
     while True:
         userInput = input()
