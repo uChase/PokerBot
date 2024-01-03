@@ -80,8 +80,15 @@ for i in range(9):
         agents.append("null")
     elif userInput == "4":
         models.append("agent")
+        userLearnRate = float(
+            input(
+                "Enter learning rate for learning DQN (I reccomend 0.1, but you can try others; also changes will be difficult to spot): "
+            )
+        )
         agents.append(
-            DQN1.PokerAgent(input_dim, output_dim, 100000, 0.4, 0.99, 1.0, 0.01, 0.8)
+            DQN1.PokerAgent(
+                input_dim, output_dim, 100000, userLearnRate, 0.99, 1.0, 0.01, 0.8
+            )
         )
     elif userInput == "5":
         models.append("human")
