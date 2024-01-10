@@ -160,3 +160,6 @@ class GlobalModel:
         ) = self.local_model(state, (ah0, ac0, ch0, cc0))
         action = torch.multinomial(policy, 1).item()
         return action, policy, (actorLSTMh, actorLSTMc), (criticLSTMh, criticLSTMc)
+
+    def save_model(self, filepath):
+        torch.save(self.model.state_dict(), filepath)
