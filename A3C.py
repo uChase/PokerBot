@@ -40,6 +40,9 @@ class ActorCritic(nn.Module):
         self.actorlayer = nn.Linear(256, output_dim)
         self.criticlayer = nn.Linear(256, 1)
         self.num_layers = num_layers
+        self.dropout = nn.Dropout(p=0.25)
+        self.actorAttention = nn.Linear(512, 512)
+        self.criticAttention = nn.Linear(512, 512)
 
     def _init_or_adjust_state(self, state, batch_size):
         if state is None:
@@ -49,7 +52,10 @@ class ActorCritic(nn.Module):
 
     def forward(self, x, ah0=None, ac0=None, ch0=None, cc0=None):
         x = self.shared_layers(x)
-        
+        x = self.dropout(x)
+        actorAttention_weights = torch.softmax(self.actorAttention(x), dim=-1)
+        criticAttention_weights = torch.softmax(self.criticAttention(x), dim=-1)
+
         if x.dim() == 2:
             x = x.unsqueeze(0)  # Add batch dimension: [seq_len, features] -> [1, seq_len, features]
 
@@ -65,10 +71,11 @@ class ActorCritic(nn.Module):
         if cc0 is None:
             cc0 = torch.zeros(self.num_layers, batch_size, 256).to(device)
 
-        
+        actorX = x * actorAttention_weights
+        criticX = x * criticAttention_weights
 
-        actorLSTMO, (actorLSTMh, actorLSTMc) = self.actorLSTM(x, (ah0, ac0))
-        criticLSTMO, (criticLSTMh, criticLSTMc) = self.criticLSTM(x, (ch0, cc0))
+        actorLSTMO, (actorLSTMh, actorLSTMc) = self.actorLSTM(actorX, (ah0, ac0))
+        criticLSTMO, (criticLSTMh, criticLSTMc) = self.criticLSTM(criticX, (ch0, cc0))
         policy = torch.softmax(self.actorlayer(actorLSTMO[:, -1, :]), dim=-1)
         value = self.criticlayer(criticLSTMO[:, -1, :])
 
