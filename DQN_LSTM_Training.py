@@ -109,6 +109,7 @@ for epoch in range(epochs):
         if currplayer['player'].get_name() == '5':
             stateTensor = pokerutils.convert_round_to_tesnor_DQN(game.players, viewable_cards, pot, roundIn, currplayer, lstmOut, game.totalWealth)
             stateTensor = stateTensor.to(device)
+            print(stateTensor.shape)
             move = agent.play(stateTensor)
             state_action_pairs.append((stateTensor, move, currplayer["player"].get_money(), pot, roundIn ))
             if move == 0:

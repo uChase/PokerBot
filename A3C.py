@@ -41,15 +41,32 @@ class ActorCritic(nn.Module):
         self.criticlayer = nn.Linear(256, 1)
         self.num_layers = num_layers
 
+    def _init_or_adjust_state(self, state, batch_size):
+        if state is None:
+            return torch.zeros(self.num_layers, batch_size, 256).to(device)
+        else:
+            return state.view(self.num_layers, batch_size, -1)
+
     def forward(self, x, ah0=None, ac0=None, ch0=None, cc0=None):
         x = self.shared_layers(x)
-        if ah0 is None or ac0 is None:
-            ah0 = torch.zeros(self.num_layers, x.size(0), 256).to(device)
-            ac0 = torch.zeros(self.num_layers, x.size(0), 256).to(device)
+        
+        if x.dim() == 2:
+            x = x.unsqueeze(0)  # Add batch dimension: [seq_len, features] -> [1, seq_len, features]
 
-        if ch0 is None or cc0 is None:
-            ch0 = torch.zeros(self.num_layers, x.size(0), 256).to(device)
-            cc0 = torch.zeros(self.num_layers, x.size(0), 256).to(device)
+        # Initialize hidden states correctly based on batch size
+        batch_size = x.size(0)
+        
+        if ah0 is None:
+            ah0 = torch.zeros(self.num_layers, batch_size, 256).to(device)
+        if ac0 is None:
+            ac0 = torch.zeros(self.num_layers, batch_size, 256).to(device)
+        if ch0 is None:
+            ch0 = torch.zeros(self.num_layers, batch_size, 256).to(device)
+        if cc0 is None:
+            cc0 = torch.zeros(self.num_layers, batch_size, 256).to(device)
+
+        
+
         actorLSTMO, (actorLSTMh, actorLSTMc) = self.actorLSTM(x, (ah0, ac0))
         criticLSTMO, (criticLSTMh, criticLSTMc) = self.criticLSTM(x, (ch0, cc0))
         policy = torch.softmax(self.actorlayer(actorLSTMO[:, -1, :]), dim=-1)
@@ -79,20 +96,9 @@ class Worker:
         )
 
     def choose_action(self, state, ah0=None, ac0=None, ch0=None, cc0=None):
-        (
-            policy,
-            value,
-            (actorLSTMh, actorLSTMc),
-            (criticLSTMh, criticLSTMc),
-        ) = self.local_model(state, (ah0, ac0, ch0, cc0))
-        action = torch.multinomial(policy, 1).item()
-        return (
-            action,
-            policy,
-            (actorLSTMh, actorLSTMc),
-            (criticLSTMh, criticLSTMc),
-            value,
-        )
+            policy, value, (actorLSTMh, actorLSTMc), (criticLSTMh, criticLSTMc) = self.local_model(state, ah0, ac0, ch0, cc0)
+            action = torch.multinomial(policy, 1).item()
+            return action, policy, (actorLSTMh, actorLSTMc), (criticLSTMh, criticLSTMc), value
 
     def update_buffer(self, log_prob, reward, value):
         self.buffer.push(log_prob, reward, value)
@@ -106,9 +112,14 @@ class Worker:
             returns.insert(0, R)
         returns = torch.tensor(returns).to(device)
 
+        values = torch.tensor(values).to(device)  # Convert values to a tensor
+        log_probs = torch.stack(log_probs)  # Convert log_probs to a tensor of tensors
+
         advantage = returns - values
-        policy_loss = -log_probs * advantage.detach()
-        value_loss = self.l1_loss(torch.cat(values), returns)
+        log_probs = log_probs.squeeze(1)
+        advantage_expanded = advantage.unsqueeze(-1).expand(-1, 3)
+        policy_loss = -log_probs * advantage_expanded.detach()
+        value_loss = self.l1_loss(torch.cat((values,), dim=0), returns)
 
         return policy_loss.sum() + value_loss.sum()
 
@@ -134,7 +145,7 @@ class Worker:
             log_prob, reward, value = experience
 
             # SINCE WE TECHNICALLY DID NOT LOG IT BEFORE
-            log_prob = torch.log(torch.tensor(log_prob, dtype=torch.float).to(device))
+            log_prob = torch.log(torch.tensor(log_prob, dtype=torch.float).to(device).clone().detach().requires_grad_(True))
             log_probs.append(log_prob)
             values.append(value)
             rewards.append(reward)
@@ -157,9 +168,13 @@ class GlobalModel:
             _,
             (actorLSTMh, actorLSTMc),
             (criticLSTMh, criticLSTMc),
-        ) = self.local_model(state, (ah0, ac0, ch0, cc0))
+        ) = self.model(state, ah0, ac0, ch0, cc0)
         action = torch.multinomial(policy, 1).item()
         return action, policy, (actorLSTMh, actorLSTMc), (criticLSTMh, criticLSTMc)
 
     def save_model(self, filepath):
         torch.save(self.model.state_dict(), filepath)
+
+    def load_model(self, filepath):
+        self.model.load_state_dict(torch.load(filepath))
+        self.model.eval()

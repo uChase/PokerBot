@@ -34,7 +34,7 @@ model.load_state_dict(
 )
 
 
-input_dim = 215
+input_dim = 210
 output_dim = 3
 num_layers = 2
 gamma = 0.99
@@ -48,7 +48,7 @@ def workerFunc(global_model, input_dim, output_dim, num_layers, gamma, thread_nu
     worker = A3C.Worker(global_model, gamma, input_dim, output_dim, num_layers)
     playerList = [pokergame.Player(str(i + 1), 1000) for i in range(9)]
     totalWealth = 9000
-    epochs = 25000
+    epochs = 100000
     for epoch in range(epochs):
         players = []
         if epoch % 50 == 0:
@@ -132,13 +132,12 @@ def workerFunc(global_model, input_dim, output_dim, num_layers, gamma, thread_nu
                 acn = currplayer["player"].get_cn()
                 chn = currplayer["player"].get_hn2()
                 ccn = currplayer["player"].get_cn2()
-                stateTensor = pokerutils.convert_round_to_tesnor_DQN(
+                stateTensor = pokerutils.convert_round_to_tesnor_A3C(
                     game.players,
                     viewable_cards,
                     pot,
                     roundIn,
                     currplayer,
-                    lstmOut,
                     game.totalWealth,
                 )
                 stateTensor = stateTensor.to(device)
@@ -150,7 +149,7 @@ def workerFunc(global_model, input_dim, output_dim, num_layers, gamma, thread_nu
                 currplayer["player"].set_hn2(chn)
                 currplayer["player"].set_cn2(ccn)
                 prob_value_pairs.append(
-                    policy, value, currplayer["player"].get_money(), pot, roundIn
+                 ( policy, value, currplayer["player"].get_money(), pot, roundIn)
                 )
                 if action == 0:
                     move = "fold"
@@ -182,12 +181,15 @@ def workerFunc(global_model, input_dim, output_dim, num_layers, gamma, thread_nu
                             bankroll, action, endResult, pot, roundIn, totalWealth
                         )
                     reward *= 10**6
+                        
                     worker.update_buffer(policy, reward, value)
+                if player['action'] == 'None' and len(prob_value_pairs) == 0:
+                        break
                 worker.train()
 
 
 if __name__ == "__main__":
-    num_processes = 4  # Or any other number depending on your system's capabilities
+    num_processes = 6  # Or any other number depending on your system's capabilities
     processes = []
 
     for thread_num in range(num_processes):

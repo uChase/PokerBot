@@ -283,6 +283,54 @@ def convert_round_to_tesnor_DQN(players, community_cards, pot, roundIn, current_
     tensor = torch.tensor(holder, dtype=torch.float)
     return tensor.unsqueeze(0)
 
+
+def convert_round_to_tesnor_A3C(players, community_cards, pot, roundIn, current_player, totalWealth=9000):
+
+    holder = []
+    curName = current_player['player'].get_name()
+    for seat in range(0, 9):
+        found = False
+        zeros = [0] * 12
+        if str(seat + 1) == curName:
+            continue
+        for i in range(len(players)):
+            if players[i]['player'].get_name() == str(seat + 1):
+                if players[i]['status'] == 'out' and players[i]['action'] == 'none':
+                    holder += zeros
+                    found = True
+                    break
+                # 3 actions
+                holder += encode_player_action_rl(players[i]['action'])
+                holder += [players[i]['player'].get_money() / totalWealth]
+                holder += [players[i]['amountIn'] / players[i]['player'].get_money()]
+                # 6 positions
+                holder += encode_player_position(players[i]['position'])
+                active = [1] if players[i]['status'] == 'active' else [0]
+                holder += active
+                found = True
+                break
+        if not found:
+            holder += zeros
+    position = encode_player_position(current_player['position'])
+    holder += position
+    chips = current_player['player'].get_money() / totalWealth
+    holder += [chips]
+    amountIn = current_player['amountIn'] / current_player['player'].get_money()
+    holder += [amountIn]
+    #maybe add roundIn?
+    cards = card_to_encoder(current_player['holeCards'])
+    holder += cards
+    comCards = card_to_encoder(community_cards)
+    holder += comCards
+    pot = pot / totalWealth
+    holder += [pot]
+    #change this up maybe, divide by either player money or totalWealth
+    buyIn = (roundIn - current_player['roundIn']) / totalWealth
+    holder += [buyIn]
+    tensor = torch.tensor(holder, dtype=torch.float)
+    return tensor.unsqueeze(0)
+
+
 def calculate_reward( bankroll, action, result, pot, roundIn, total_wealth):
     #action = 0 fold, 1 call, 2 raise
 
